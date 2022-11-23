@@ -1,0 +1,92 @@
+﻿@model IEnumerable<Exam.Models.Activity>
+
+@{
+    ViewBag.Title = "Meetups";
+}
+<br />
+<h1>
+    Dojo Meet Up Center
+</h1>
+<h3>Welcome @ViewBag.userName</h3>
+<br />
+
+<label class="text-danger">@ViewBag.Message</label>
+<br />
+<br />
+
+<table class="table">
+    <tr>
+        <th>
+            Meet Up
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Duration)
+        </th>
+        <th>
+            Event Coordinator
+        </th>
+        <th>
+            No of Participants
+        </th>
+        <th>
+            Actions
+        </th>
+    </tr>
+
+    @if (Model != null)
+    {
+
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.Title, "/Activity/" + item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Duration) @Html.DisplayFor(modelItem => item.Units)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Guests.Count)
+                </td>
+                <td>
+                    @if (item.User.Id == (int)Session["UserId"])
+                    {
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    }
+                    else
+                    {
+                        bool isGuest = false;
+                        foreach (var guest in item.Guests)
+                        {
+                            if (guest.User.Id == (int)Session["UserId"])
+                            {
+                                isGuest = true;
+                            }
+                        }
+                        if (isGuest)
+                        {
+                            @Html.ActionLink("Leave", "Leave", new { id = item.Id })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Join", "Join", new { id = item.Id })
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    }
+
+</table>
+<p>
+    @Html.ActionLink("Create New", "New")
+</p>

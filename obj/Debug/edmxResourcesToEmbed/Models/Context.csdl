@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ContextExam" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Activity">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CreatorId" Type="Int32" />
+    <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="Duration" Type="Int32" />
+    <Property Name="Units" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="User" Relationship="Self.FK_Activities_Users" FromRole="Activities" ToRole="Users" />
+    <NavigationProperty Name="Guests" Relationship="Self.FK_Guests_Activities" FromRole="Activities" ToRole="Guests" />
+  </EntityType>
+  <EntityType Name="Guest">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserId" Type="Int32" />
+    <Property Name="ActivityId" Type="Int32" />
+    <NavigationProperty Name="Activity" Relationship="Self.FK_Guests_Activities" FromRole="Guests" ToRole="Activities" />
+    <NavigationProperty Name="User" Relationship="Self.FK_Guests_Users" FromRole="Guests" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="PasswordConfirmation" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Activities" Relationship="Self.FK_Activities_Users" FromRole="Users" ToRole="Activities" />
+    <NavigationProperty Name="Guests" Relationship="Self.FK_Guests_Users" FromRole="Users" ToRole="Guests" />
+  </EntityType>
+  <Association Name="FK_Activities_Users">
+    <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+    <End Role="Activities" Type="Self.Activity" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Activities">
+        <PropertyRef Name="CreatorId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Guests_Activities">
+    <End Role="Activities" Type="Self.Activity" Multiplicity="0..1" />
+    <End Role="Guests" Type="Self.Guest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Activities">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Guests">
+        <PropertyRef Name="ActivityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Guests_Users">
+    <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+    <End Role="Guests" Type="Self.Guest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Guests">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Contextdb" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Activities" EntityType="Self.Activity" />
+    <EntitySet Name="Guests" EntityType="Self.Guest" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <AssociationSet Name="FK_Activities_Users" Association="Self.FK_Activities_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Activities" EntitySet="Activities" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Guests_Activities" Association="Self.FK_Guests_Activities">
+      <End Role="Activities" EntitySet="Activities" />
+      <End Role="Guests" EntitySet="Guests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Guests_Users" Association="Self.FK_Guests_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Guests" EntitySet="Guests" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

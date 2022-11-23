@@ -1,0 +1,63 @@
+﻿@model Exam.Models.Activity
+
+@{
+    ViewBag.Title = "Activity";
+}
+<br />
+<h1>
+    Dojo Meet Up Center
+</h1>
+<br />
+
+<h2>@Html.DisplayFor(model => model.Title)</h2>
+
+<div>
+    <h3>Event Coordinator: @Html.DisplayFor(model => model.User.Name)</h3>
+    <hr />
+    <div class="dl-horizontal">
+        <br />
+        <h4>@Html.DisplayNameFor(model => model.Description):</h4>
+        <p>
+            @Html.DisplayFor(model => model.Description)
+        </p>
+        <br />
+        <h4>Participants:</h4>
+        @if (Model.Guests.Count > 0)
+        {
+            foreach (var guest in Model.Guests)
+            {
+                <p>
+                    @guest.User.Name
+                </p>
+            }
+        }
+
+
+        <br />
+    </div>
+</div>
+<p>
+    @if (Model.User.Id == (int)Session["UserId"])
+    {
+        @Html.ActionLink("Delete", "Delete", new { id = Model.Id })
+    }
+    else
+    {
+        bool isGuest = false;
+        foreach (var guest in Model.Guests)
+        {
+            if (guest.User.Id == (int)Session["UserId"])
+            {
+                isGuest = true;
+            }
+        }
+        if (isGuest)
+        {
+            @Html.ActionLink("Leave", "Leave", new { id = Model.Id })
+        }
+        else
+        {
+            @Html.ActionLink("Join", "Join", new { id = Model.Id })
+        }
+    }
+</p>
